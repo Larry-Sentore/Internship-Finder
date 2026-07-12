@@ -30,6 +30,12 @@ class ChatRepository {
     return doc.id;
   }
 
+  Stream<Conversation?> watchConversation(String conversationId) {
+    return _firestoreService
+        .streamDoc(FirestoreCollections.conversations, conversationId)
+        .map((doc) => doc.exists ? Conversation.fromFirestore(doc) : null);
+  }
+
   Stream<List<Conversation>> watchConversationsForUser(String userId) {
     return _firestoreService
         .streamCollection(

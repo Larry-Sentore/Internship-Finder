@@ -16,6 +16,30 @@ enum OpportunityCategory {
 extension OpportunityCategoryX on OpportunityCategory {
   String get value => name;
 
+  /// Short label for chips/cards, e.g. "Software Dev", "Business Analysis".
+  String get displayLabel {
+    switch (this) {
+      case OpportunityCategory.softwareDevelopment:
+        return 'Engineering';
+      case OpportunityCategory.design:
+        return 'Design';
+      case OpportunityCategory.marketing:
+        return 'Marketing';
+      case OpportunityCategory.operations:
+        return 'Operations';
+      case OpportunityCategory.research:
+        return 'Research';
+      case OpportunityCategory.businessAnalysis:
+        return 'Data';
+      case OpportunityCategory.contentCreation:
+        return 'Content';
+      case OpportunityCategory.communityManagement:
+        return 'Community';
+      case OpportunityCategory.other:
+        return 'Other';
+    }
+  }
+
   static OpportunityCategory fromValue(String? value) {
     return OpportunityCategory.values.firstWhere(
       (c) => c.name == value,

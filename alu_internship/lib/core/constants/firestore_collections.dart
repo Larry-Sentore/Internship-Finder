@@ -10,5 +10,4 @@ class FirestoreCollections {
   static const String bookmarks = 'bookmarks';
   static const String conversations = 'conversations';
   static const String messages = 'messages';
-  static const String notifications = 'notifications';
 }

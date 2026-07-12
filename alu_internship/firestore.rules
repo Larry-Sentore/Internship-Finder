@@ -1,0 +1,88 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isStartupOwner(startupId) {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/startups/$(startupId)).data.ownerId == request.auth.uid;
+    }
+
+    // users/{uid} - base profile, includes role (student/startupOwner/admin)
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(userId);
+      // role is set once at signup and must not be self-escalated afterwards
+      allow update: if isOwner(userId) && request.resource.data.role == resource.data.role;
+      allow delete: if false;
+    }
+
+    // studentProfiles/{uid} - extended student info, keyed by user uid
+    match /studentProfiles/{studentId} {
+      allow read: if isSignedIn();
+      allow write: if isOwner(studentId);
+    }
+
+    // startups/{startupId} - startup/org profiles pending ALU verification
+    match /startups/{startupId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.verificationStatus == 'pending';
+      // owners can edit their startup but cannot verify themselves;
+      // verificationStatus changes are expected to come from an admin-only workflow
+      allow update: if isStartupOwner(startupId)
+        && request.resource.data.verificationStatus == resource.data.verificationStatus;
+      allow delete: if isStartupOwner(startupId);
+    }
+
+    // opportunities/{opportunityId} - postings created by verified startup owners
+    match /opportunities/{opportunityId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn()
+        && request.resource.data.postedBy == request.auth.uid
+        && isStartupOwner(request.resource.data.startupId);
+      allow update, delete: if isStartupOwner(resource.data.startupId);
+    }
+
+    // applications/{applicationId} - a student's submission to an opportunity
+    match /applications/{applicationId} {
+      allow read: if isSignedIn() &&
+        (resource.data.studentId == request.auth.uid || isStartupOwner(resource.data.startupId));
+      allow create: if isSignedIn() && request.resource.data.studentId == request.auth.uid;
+      // the applicant may only withdraw; the startup owner may change status
+      allow update: if isSignedIn() && (
+        (resource.data.studentId == request.auth.uid &&
+          request.resource.data.status == 'withdrawn') ||
+        isStartupOwner(resource.data.startupId)
+      );
+      allow delete: if false;
+    }
+
+    // bookmarks/{bookmarkId} - id is "{studentId}_{opportunityId}"; never updated, only created/removed
+    match /bookmarks/{bookmarkId} {
+      allow read, delete: if isSignedIn() && resource.data.studentId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.studentId == request.auth.uid;
+    }
+
+    // conversations/{conversationId} and their messages subcollection
+    match /conversations/{conversationId} {
+      allow read, update: if isSignedIn() && request.auth.uid in resource.data.participantIds;
+      allow create: if isSignedIn() && request.auth.uid in request.resource.data.participantIds;
+
+      match /messages/{messageId} {
+        allow read: if isSignedIn() &&
+          request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participantIds;
+        allow create: if isSignedIn() && request.resource.data.senderId == request.auth.uid;
+        allow update, delete: if false;
+      }
+    }
+  }
+}

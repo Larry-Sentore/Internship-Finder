@@ -1,31 +1,60 @@
 // Login screen UI for existing users.
+import 'package:auto_route/auto_route.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alu_internship/core/theme/app_theme.dart';
+import 'package:alu_internship/core/router/app_router.dart';
+import 'package:alu_internship/features/auth/providers/auth_providers.dart';
 
-class Register extends StatefulWidget {
-  const Register({super.key});
+@RoutePage(name: 'LoginRoute')
+class LoginScreen extends ConsumerStatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<Register> createState() => _RegisterState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _RegisterState extends State<Register> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
-  void _handleLogin() {
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
     if (!formkey.currentState!.validate()) return;
 
-    Session.login(emailController.text.trim(), passwordController.text);
-
-    if (Session.isLoggedIn) {
-      Navigator.pushReplacementNamed(context, '/home');
-    } else {
+    setState(() => _isLoading = true);
+    try {
+      await ref
+          .read(authRepositoryProvider)
+          .signIn(
+            email: emailController.text.trim(),
+            password: passwordController.text,
+          );
+      if (!mounted) return;
+      context.router.replaceAll([const HomeRoute()]);
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid email or password')),
+        SnackBar(content: Text(e.message ?? 'Invalid email or password')),
       );
+    } catch (e, stackTrace) {
+      debugPrint('Login failed: $e\n$stackTrace');
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Login failed: $e')));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -38,14 +67,6 @@ class _RegisterState extends State<Register> {
         elevation: 0,
         title: Row(
           children: [
-            SizedBox(
-              width: 40,
-              height: 40,
-              child: Image.asset(
-                'assets/images/alu_logo.webp',
-                fit: BoxFit.contain,
-              ),
-            ),
             SizedBox(width: AppSpacing.md),
             Text(
               "ALU Intercampus",
@@ -190,7 +211,7 @@ class _RegisterState extends State<Register> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: _handleLogin,
+                          onPressed: _isLoading ? null : _handleLogin,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             foregroundColor: AppColors.white,
@@ -203,12 +224,21 @@ class _RegisterState extends State<Register> {
                               ),
                             ),
                           ),
-                          child: Text(
-                            "Login",
-                            style: AppTextStyles.labelMedium.copyWith(
-                              color: AppColors.white,
-                            ),
-                          ),
+                          child: _isLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppColors.white,
+                                  ),
+                                )
+                              : Text(
+                                  "Login",
+                                  style: AppTextStyles.labelMedium.copyWith(
+                                    color: AppColors.white,
+                                  ),
+                                ),
                         ),
                       ),
                       SizedBox(height: AppSpacing.lg),
@@ -268,7 +298,8 @@ class _RegisterState extends State<Register> {
                         children: [
                           Text("Don't have an account? ", style: AppTextStyles.bodyMedium),
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () =>
+                                context.router.push(const RoleSelectionRoute()),
                             child: Text(
                               "Sign up",
                               style: AppTextStyles.labelMedium.copyWith(
