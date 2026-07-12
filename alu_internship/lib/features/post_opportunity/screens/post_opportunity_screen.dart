@@ -30,6 +30,7 @@ class _PostOpportunityScreenState
   OpportunityCategory _category = OpportunityCategory.softwareDevelopment;
   bool _isSubmitting = false;
 
+  // Clears the text fields from memory when this screen closes.
   @override
   void dispose() {
     _titleController.dispose();
@@ -40,11 +41,13 @@ class _PostOpportunityScreenState
     super.dispose();
   }
 
+  // Saves the new opportunity to the database, then empties the form so another can be posted.
   Future<void> _handleSubmit(Startup startup) async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isSubmitting = true);
     try {
+      // Turns the comma-separated skills text into a proper list, e.g. "Dart, Flutter" -> [Dart, Flutter].
       final skills = _skillsController.text
           .split(',')
           .map((s) => s.trim())
@@ -86,6 +89,7 @@ class _PostOpportunityScreenState
     }
   }
 
+  // Loads the owner's startup first, since every opportunity needs to be linked to one.
   @override
   Widget build(BuildContext context) {
     final myStartup = ref.watch(myStartupProvider);
@@ -283,6 +287,7 @@ class _PostOpportunityScreenState
   }
 }
 
+// A small warning banner reminding the owner their startup isn't ALU-verified yet.
 class _VerificationNotice extends StatelessWidget {
   const _VerificationNotice({required this.startup});
 
@@ -290,6 +295,7 @@ class _VerificationNotice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Hides itself once the startup has been verified.
     if (startup.isVerified) return const SizedBox.shrink();
 
     return Container(

@@ -22,6 +22,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool _obscurePassword = true;
   bool _isLoading = false;
 
+  // Clears the text fields from memory when this screen closes.
   @override
   void dispose() {
     emailController.dispose();
@@ -29,6 +30,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
+  // Checks the email and password, signs the person in, and takes them to the home screen.
   Future<void> _handleLogin() async {
     if (!formkey.currentState!.validate()) return;
 
@@ -58,6 +60,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
+  // Draws the login form: email and password fields, a login button, and a link to sign up.
   @override
   Widget build(BuildContext context) {
     return Scaffold(

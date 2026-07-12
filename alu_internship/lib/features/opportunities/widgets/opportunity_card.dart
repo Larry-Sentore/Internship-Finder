@@ -10,6 +10,8 @@ import '../../auth/providers/auth_providers.dart';
 import '../../bookmarks/providers/bookmark_providers.dart';
 import '../../post_opportunity/providers/post_opportunity_providers.dart';
 
+// Shows one opportunity as a card: icon, title, startup name, quick facts, and a bookmark button.
+// Used in the feed, bookmarks list, and applications list so opportunities always look the same.
 class OpportunityCard extends ConsumerWidget {
   const OpportunityCard({super.key, required this.opportunity});
 
@@ -17,10 +19,12 @@ class OpportunityCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Looks up the startup's name and whether this opportunity is already saved.
     final startup = ref.watch(startupByIdProvider(opportunity.startupId));
     final isBookmarked = ref.watch(isBookmarkedProvider(opportunity.id));
 
     return InkWell(
+      // Tapping the card opens the full opportunity details.
       onTap: () => context.router.push(
         OpportunityDetailRoute(opportunityId: opportunity.id),
       ),
@@ -91,6 +95,7 @@ class OpportunityCard extends ConsumerWidget {
     );
   }
 
+  // Saves or un-saves this opportunity for the signed-in student when the bookmark icon is tapped.
   Future<void> _toggleBookmark(WidgetRef ref, bool currentlyBookmarked) async {
     final user = ref.read(authStateChangesProvider).value;
     if (user == null) return;

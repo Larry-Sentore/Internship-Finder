@@ -5,6 +5,7 @@ import '../../../models/student_profile.dart';
 import '../../../repositories/student_profile_repository.dart';
 import '../../auth/providers/auth_providers.dart';
 
+// Gives screens access to reading and saving a student's skills, interests, and resume link.
 final studentProfileRepositoryProvider = Provider<StudentProfileRepository>((
   ref,
 ) {
@@ -12,6 +13,7 @@ final studentProfileRepositoryProvider = Provider<StudentProfileRepository>((
 });
 
 /// The signed-in student's extended profile (skills, interests, resume).
+// Gets the signed-in student's saved skills, interests, and resume link.
 final myStudentProfileProvider = StreamProvider.autoDispose<StudentProfile?>((
   ref,
 ) {

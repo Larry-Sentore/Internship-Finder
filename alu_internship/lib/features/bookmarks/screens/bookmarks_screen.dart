@@ -14,6 +14,7 @@ import '../providers/bookmark_providers.dart';
 class BookmarksScreen extends ConsumerWidget {
   const BookmarksScreen({super.key});
 
+  // Loads the student's saved opportunities and lists them out.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bookmarks = ref.watch(myBookmarksProvider);
@@ -53,6 +54,7 @@ class BookmarksScreen extends ConsumerWidget {
   }
 }
 
+// A bookmark only stores the opportunity's id, so this loads the full opportunity and shows its card.
 class _BookmarkedOpportunity extends ConsumerWidget {
   const _BookmarkedOpportunity({required this.opportunityId});
 
@@ -62,6 +64,7 @@ class _BookmarkedOpportunity extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final opportunity = ref.watch(opportunityByIdProvider(opportunityId));
 
+    // If the opportunity was deleted or hasn't loaded yet, just show nothing instead of an error.
     return opportunity.when(
       data: (opportunity) => opportunity == null
           ? const SizedBox.shrink()

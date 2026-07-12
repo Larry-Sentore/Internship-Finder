@@ -9,6 +9,7 @@ import 'package:alu_internship/models/app_user.dart';
 class RoleSelectionScreen extends StatelessWidget {
   const RoleSelectionScreen({super.key});
 
+  // Shows two cards so the new user can pick whether they are a student or a startup founder.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +37,7 @@ class RoleSelectionScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: AppSpacing.xxl),
+                // Picking this sends the student to sign up with the student role already chosen.
                 _RoleCard(
                   icon: Icons.school_outlined,
                   title: "I'm a Student",
@@ -45,6 +47,7 @@ class RoleSelectionScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: AppSpacing.lg),
+                // Picking this sends the founder to sign up with the startup-owner role chosen.
                 _RoleCard(
                   icon: Icons.rocket_launch_outlined,
                   title: "I'm a Startup Founder",
@@ -76,6 +79,7 @@ class RoleSelectionScreen extends StatelessWidget {
   }
 }
 
+// One tappable card showing an icon, a title, and a short description.
 class _RoleCard extends StatelessWidget {
   const _RoleCard({
     required this.icon,

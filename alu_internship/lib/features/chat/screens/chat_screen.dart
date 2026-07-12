@@ -25,6 +25,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   final _scrollController = ScrollController();
   bool _isSending = false;
 
+  // Clears the message box and scroll position from memory when this screen closes.
   @override
   void dispose() {
     _messageController.dispose();
@@ -32,6 +33,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     super.dispose();
   }
 
+  // Sends whatever text is typed in the message box.
   Future<void> _handleSend() async {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
@@ -66,6 +68,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget build(BuildContext context) {
     final currentUser = ref.watch(authStateChangesProvider).value;
     final conversation = ref.watch(conversationByIdProvider(widget.conversationId));
+    // Works out who the other person in this chat is, so we can show their name up top.
     final otherUid = conversation.value?.otherParticipant(currentUser?.uid ?? '');
     final otherUser = otherUid == null
         ? null
@@ -94,6 +97,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     subtitle: 'Send the first message to start the conversation.',
                   );
                 }
+                // Jumps the message list down to the newest message once it's drawn.
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (_scrollController.hasClients) {
                     _scrollController.jumpTo(
@@ -121,6 +125,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ),
             ),
           ),
+          // The text box and send button pinned to the bottom of the screen.
           SafeArea(
             top: false,
             child: Padding(
@@ -171,6 +176,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 }
 
+// One chat bubble. Sits on the right in the app's color if it's mine, left and plain if not.
 class _MessageBubble extends StatelessWidget {
   const _MessageBubble({required this.message, required this.isMine});
 

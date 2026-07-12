@@ -15,6 +15,7 @@ import '../providers/chat_providers.dart';
 class ConversationsScreen extends ConsumerWidget {
   const ConversationsScreen({super.key});
 
+  // Loads and lists every conversation the signed-in person is part of.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final conversations = ref.watch(myConversationsProvider);
@@ -54,6 +55,7 @@ class ConversationsScreen extends ConsumerWidget {
   }
 }
 
+// One row in the conversation list: the other person's photo, name, last message, and time.
 class _ConversationCard extends ConsumerWidget {
   const _ConversationCard({required this.conversation});
 
@@ -62,10 +64,12 @@ class _ConversationCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUser = ref.watch(authStateChangesProvider).value;
+    // A conversation only stores two ids, so this finds the one that isn't me.
     final otherUid = conversation.otherParticipant(currentUser?.uid ?? '');
     final otherUser = ref.watch(appUserByIdProvider(otherUid));
 
     return InkWell(
+      // Tapping a row opens the full chat with that person.
       onTap: () => context.router.push(ChatRoute(conversationId: conversation.id)),
       borderRadius: BorderRadius.circular(AppRadius.card),
       child: Container(
@@ -118,6 +122,7 @@ class _ConversationCard extends ConsumerWidget {
     );
   }
 
+  // Turns the last message's timestamp into a short label like "now", "5m", "2h", or "3d".
   String _timeAgo(DateTime? date) {
     if (date == null) return '';
     final diff = DateTime.now().difference(date);

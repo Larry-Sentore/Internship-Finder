@@ -5,11 +5,12 @@ import '../../../models/application.dart';
 import '../../../repositories/application_repository.dart';
 import '../../auth/providers/auth_providers.dart';
 
+// Gives screens access to the application actions, like sending one, accepting, or rejecting.
 final applicationRepositoryProvider = Provider<ApplicationRepository>((ref) {
   return ApplicationRepository();
 });
 
-/// The signed-in student's own applications.
+// Gets the list of applications the signed-in student has sent, so they can check their status.
 final myApplicationsProvider = StreamProvider.autoDispose<List<Application>>((
   ref,
 ) {
@@ -20,7 +21,7 @@ final myApplicationsProvider = StreamProvider.autoDispose<List<Application>>((
       .watchApplicationsByStudent(user.uid);
 });
 
-/// Applicants to a single opportunity, for the startup owner reviewing them.
+// Gets everyone who applied to one opportunity, so the startup owner can look through them.
 final applicationsByOpportunityProvider = StreamProvider.autoDispose
     .family<List<Application>, String>((ref, opportunityId) {
       return ref

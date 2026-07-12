@@ -11,6 +11,7 @@ import '../../auth/providers/auth_providers.dart';
 class HomeShellScreen extends ConsumerWidget {
   const HomeShellScreen({super.key});
 
+  // Builds the bottom tab bar and shows a different second tab depending on the person's role.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appUser = ref.watch(currentAppUserProvider).value;
@@ -19,6 +20,7 @@ class HomeShellScreen extends ConsumerWidget {
     return AutoTabsRouter(
       routes: [
         const FeedRoute(),
+        // Startup owners get a tab to post opportunities; students get one to track their applications.
         if (isStartupOwner) const PostOpportunityRoute() else const MyApplicationsRoute(),
         const ConversationsRoute(),
         const ProfileRoute(),
@@ -36,6 +38,7 @@ class HomeShellScreen extends ConsumerWidget {
                 selectedIcon: Icon(Icons.explore),
                 label: 'Feed',
               ),
+              // This label and icon must match the tab picked above.
               if (isStartupOwner)
                 const NavigationDestination(
                   icon: Icon(Icons.add_circle_outline),

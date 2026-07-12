@@ -16,6 +16,7 @@ import '../providers/application_providers.dart';
 class MyApplicationsScreen extends ConsumerWidget {
   const MyApplicationsScreen({super.key});
 
+  // Loads the student's own applications and lists them, newest first.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final applications = ref.watch(myApplicationsProvider);
@@ -55,15 +56,18 @@ class MyApplicationsScreen extends ConsumerWidget {
   }
 }
 
+// One application's card: which opportunity it's for, its status, and a withdraw option.
 class _ApplicationCard extends ConsumerWidget {
   const _ApplicationCard({required this.application});
 
   final Application application;
 
+  // The student can only cancel an application before a decision has been made.
   bool get _canWithdraw =>
       application.status == ApplicationStatus.pending ||
       application.status == ApplicationStatus.underReview;
 
+  // Asks the student to confirm, then cancels the application if they say yes.
   Future<void> _handleWithdraw(BuildContext context, WidgetRef ref) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -98,10 +102,12 @@ class _ApplicationCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Looks up the opportunity's title and the startup's name to show on the card.
     final opportunity = ref.watch(opportunityByIdProvider(application.opportunityId));
     final startup = ref.watch(startupByIdProvider(application.startupId));
 
     return InkWell(
+      // Tapping the card opens the full opportunity again.
       onTap: () => context.router.push(
         OpportunityDetailRoute(opportunityId: application.opportunityId),
       ),
@@ -159,6 +165,7 @@ class _ApplicationCard extends ConsumerWidget {
                 _StatusBadge(status: application.status),
               ],
             ),
+            // Only show the withdraw button if this application can still be cancelled.
             if (_canWithdraw) ...[
               SizedBox(height: AppSpacing.sm),
               Align(
@@ -181,6 +188,7 @@ class _ApplicationCard extends ConsumerWidget {
   }
 }
 
+// Small colored label showing the application's current status (e.g. Pending, Accepted).
 class _StatusBadge extends StatelessWidget {
   const _StatusBadge({required this.status});
 
@@ -188,6 +196,7 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Picks which icon, color, and text to show based on the status.
     final IconData icon;
     final Color color;
     final String label;

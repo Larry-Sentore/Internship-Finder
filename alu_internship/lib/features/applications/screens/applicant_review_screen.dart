@@ -19,6 +19,7 @@ class ApplicantReviewScreen extends ConsumerWidget {
 
   final String opportunityId;
 
+  // Loads the opportunity's title and the list of people who applied to it, then shows them.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final opportunity = ref.watch(opportunityByIdProvider(opportunityId));
@@ -62,15 +63,18 @@ class ApplicantReviewScreen extends ConsumerWidget {
   }
 }
 
+// One applicant's card: their name, note, resume link, current status, and action buttons.
 class _ApplicantCard extends ConsumerWidget {
   const _ApplicantCard({required this.application});
 
   final Application application;
 
+  // True while the application hasn't been accepted or rejected yet.
   bool get _isPending =>
       application.status == ApplicationStatus.pending ||
       application.status == ApplicationStatus.underReview;
 
+  // Opens the applicant's resume link in the browser when tapped.
   Future<void> _openResume(BuildContext context, String url) async {
     final uri = Uri.tryParse(url);
     if (uri == null || !await launchUrl(uri)) {
@@ -81,6 +85,7 @@ class _ApplicantCard extends ConsumerWidget {
     }
   }
 
+  // Saves the new status (accepted or rejected) for this application.
   Future<void> _updateStatus(
     BuildContext context,
     WidgetRef ref,
@@ -100,6 +105,7 @@ class _ApplicantCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Looks up the applying student's name and photo using their id.
     final student = ref.watch(appUserByIdProvider(application.studentId));
 
     return Container(
@@ -136,6 +142,7 @@ class _ApplicantCard extends ConsumerWidget {
                       style: AppTextStyles.headingSmall,
                     ),
                     SizedBox(height: AppSpacing.xs),
+                    // Shows the short note the student wrote, if they wrote one.
                     if (application.coverNote.isNotEmpty)
                       Text(
                         application.coverNote,
@@ -143,6 +150,7 @@ class _ApplicantCard extends ConsumerWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
+                    // Shows a link to the student's resume, if they added one to their profile.
                     if (application.resumeUrl != null) ...[
                       SizedBox(height: AppSpacing.xs),
                       InkWell(
@@ -175,7 +183,9 @@ class _ApplicantCard extends ConsumerWidget {
           SizedBox(height: AppSpacing.md),
           Row(
             children: [
+              // Lets the startup owner start a chat with this applicant.
               MessageUserButton(otherUserId: application.studentId),
+              // Only show the accept/reject buttons while a decision hasn't been made yet.
               if (_isPending) ...[
                 SizedBox(width: AppSpacing.sm),
                 Expanded(
@@ -228,6 +238,7 @@ class _ApplicantCard extends ConsumerWidget {
   }
 }
 
+// Small colored label showing the application's current status (e.g. Pending, Accepted).
 class _StatusBadge extends StatelessWidget {
   const _StatusBadge({required this.status});
 
@@ -235,6 +246,7 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Picks which icon, color, and text to show based on the status.
     final IconData icon;
     final Color color;
     final String label;

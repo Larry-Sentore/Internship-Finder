@@ -31,6 +31,7 @@ class _OpportunityDetailScreenState
     extends ConsumerState<OpportunityDetailScreen> {
   bool _isApplying = false;
 
+  // Sends the student's application, attaching their resume link if they have one saved.
   Future<void> _handleApply(Opportunity opportunity) async {
     final user = ref.read(authStateChangesProvider).value;
     if (user == null) return;
@@ -68,6 +69,7 @@ class _OpportunityDetailScreenState
     }
   }
 
+  // Turns the posting date into a friendly label like "Posted today" or "Posted 3 days ago".
   String _postedLabel(DateTime? date) {
     if (date == null) return 'Recently posted';
     final days = DateTime.now().difference(date).inDays;
@@ -76,6 +78,7 @@ class _OpportunityDetailScreenState
     return 'Posted $days days ago';
   }
 
+  // Loads the opportunity by its id and shows its details, or a message if it can't be found.
   @override
   Widget build(BuildContext context) {
     final opportunityAsync = ref.watch(
@@ -115,6 +118,7 @@ class _OpportunityDetailScreenState
   }
 }
 
+// The main content of the detail screen: title, startup, key facts, description, and apply button.
 class _OpportunityDetailBody extends ConsumerWidget {
   const _OpportunityDetailBody({
     required this.opportunity,
@@ -130,6 +134,7 @@ class _OpportunityDetailBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Looks up the startup that posted this opportunity, so we can show its name and owner.
     final startup = ref.watch(startupByIdProvider(opportunity.startupId));
 
     return Column(
@@ -201,6 +206,7 @@ class _OpportunityDetailBody extends ConsumerWidget {
             ),
           ),
         ),
+        // The message and apply buttons pinned to the bottom of the screen.
         Padding(
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Row(
@@ -251,6 +257,7 @@ class _OpportunityDetailBody extends ConsumerWidget {
   }
 }
 
+// One line with a small icon and a bit of text, used for the commitment, location, and post date.
 class _InfoRow extends StatelessWidget {
   const _InfoRow({required this.icon, required this.text});
 
@@ -269,6 +276,7 @@ class _InfoRow extends StatelessWidget {
   }
 }
 
+// A row of small rounded labels, one for each required skill.
 class _SkillChips extends StatelessWidget {
   const _SkillChips({required this.skills});
 

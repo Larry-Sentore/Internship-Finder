@@ -24,6 +24,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   bool _fieldsPopulated = false;
   bool _isSaving = false;
 
+  // Clears the text fields from memory when this screen closes.
   @override
   void dispose() {
     _skillsController.dispose();
@@ -32,6 +33,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     super.dispose();
   }
 
+  // Fills the text fields with the student's saved profile, but only the first time it loads,
+  // so it doesn't overwrite anything they're in the middle of typing.
   void _populateFields(StudentProfile? profile) {
     if (_fieldsPopulated || profile == null) return;
     _fieldsPopulated = true;
@@ -40,12 +43,14 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     _resumeUrlController.text = profile.resumeUrl ?? '';
   }
 
+  // Saves the skills, interests, and resume link the student typed in.
   Future<void> _handleSave() async {
     final user = ref.read(authStateChangesProvider).value;
     if (user == null) return;
 
     setState(() => _isSaving = true);
     try {
+      // Turns the comma-separated text into proper lists, e.g. "Dart, Flutter" -> [Dart, Flutter].
       final skills = _skillsController.text
           .split(',')
           .map((s) => s.trim())
@@ -82,6 +87,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     }
   }
 
+  // Draws the skills, interests, and resume fields. Startup owners don't see this section.
   @override
   Widget build(BuildContext context) {
     final appUser = ref.watch(currentAppUserProvider).value;

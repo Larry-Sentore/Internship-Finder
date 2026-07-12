@@ -15,6 +15,7 @@ import '../widgets/opportunity_card.dart';
 class FeedScreen extends ConsumerWidget {
   const FeedScreen({super.key});
 
+  // Draws the greeting, search bar, category picker, and the list of open opportunities.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appUser = ref.watch(currentAppUserProvider).value;
@@ -27,6 +28,7 @@ class FeedScreen extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.all(AppSpacing.lg),
           children: [
+            // Greeting with the person's first name and their profile photo.
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -60,6 +62,7 @@ class FeedScreen extends ConsumerWidget {
               ],
             ),
             SizedBox(height: AppSpacing.xl),
+            // Typing here updates the search text, which narrows down the list below.
             Row(
               children: [
                 Expanded(
@@ -101,6 +104,7 @@ class FeedScreen extends ConsumerWidget {
             SizedBox(height: AppSpacing.xl),
             Text('Browse by category', style: AppTextStyles.headingSmall),
             SizedBox(height: AppSpacing.md),
+            // A row of category circles. Tapping one filters the list; tapping it again clears it.
             SizedBox(
               height: 76,
               child: ListView.separated(
@@ -145,6 +149,7 @@ class FeedScreen extends ConsumerWidget {
             SizedBox(height: AppSpacing.xl),
             Text('Recent opportunities', style: AppTextStyles.headingSmall),
             SizedBox(height: AppSpacing.md),
+            // The actual list of opportunities that match the current search and category.
             opportunities.when(
               data: (list) {
                 if (list.isEmpty) {
@@ -177,6 +182,7 @@ class FeedScreen extends ConsumerWidget {
     );
   }
 
+  // Picks which little icon to show for each category in the "Browse by category" row.
   IconData _categoryIcon(OpportunityCategory category) {
     switch (category) {
       case OpportunityCategory.softwareDevelopment:
@@ -200,6 +206,7 @@ class FeedScreen extends ConsumerWidget {
     }
   }
 
+  // Pulls out just the first name from someone's full name, for a shorter greeting.
   String _firstName(String? displayName) {
     if (displayName == null || displayName.trim().isEmpty) return 'there';
     return displayName.trim().split(' ').first;

@@ -32,8 +32,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   bool _obscurePassword = true;
   bool _isLoading = false;
 
+  // True when this sign-up form is being filled in by a startup founder, not a student.
   bool get _isStartupOwner => widget.role == UserRole.startupOwner;
 
+  // Clears the text fields from memory when this screen closes.
   @override
   void dispose() {
     emailController.dispose();
@@ -46,6 +48,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     super.dispose();
   }
 
+  // Creates the account, and if this is a startup founder, also creates their startup entry.
   Future<void> _handleSignup() async {
     if (!formkey.currentState!.validate()) return;
 
@@ -60,6 +63,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
             role: widget.role,
           );
 
+      // Only startup founders need a startup created alongside their account.
       if (_isStartupOwner) {
         await ref
             .read(startupRepositoryProvider)
@@ -95,6 +99,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     }
   }
 
+  // Draws the sign-up form. Startup founders see extra fields for their startup's details.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -212,6 +217,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                                 fillColor: AppColors.primaryLight,
                               ),
                             ),
+                            // These extra fields about the startup only show up for founders.
                             if (_isStartupOwner) ...[
                               SizedBox(height: AppSpacing.lg),
                               Text(

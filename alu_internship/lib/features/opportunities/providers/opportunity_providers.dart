@@ -5,16 +5,19 @@ import 'package:flutter_riverpod/legacy.dart';
 import '../../../models/opportunity.dart';
 import '../../../repositories/opportunity_repository.dart';
 
+// Gives screens access to reading, creating, and updating opportunity postings.
 final opportunityRepositoryProvider = Provider<OpportunityRepository>((ref) {
   return OpportunityRepository();
 });
 
+// Holds the search text and category the student has picked on the feed screen.
 class OpportunityFeedFilter {
   const OpportunityFeedFilter({this.category, this.searchQuery = ''});
 
   final OpportunityCategory? category;
   final String searchQuery;
 
+  // Returns a copy of this filter with just the given parts swapped out.
   OpportunityFeedFilter copyWith({
     OpportunityCategory? Function()? category,
     String? searchQuery,
@@ -36,9 +39,11 @@ class OpportunityFeedFilter {
   int get hashCode => Object.hash(category, searchQuery);
 }
 
+// Remembers the current search text and category so the feed screen can react when they change.
 final opportunityFeedFilterProvider =
     StateProvider<OpportunityFeedFilter>((ref) => const OpportunityFeedFilter());
 
+// Gets the list of open opportunities that match the current search text and category.
 final feedOpportunitiesProvider = StreamProvider.autoDispose((ref) {
   final filter = ref.watch(opportunityFeedFilterProvider);
   return ref
@@ -49,6 +54,7 @@ final feedOpportunitiesProvider = StreamProvider.autoDispose((ref) {
       );
 });
 
+// Gets one specific opportunity by its id, for the detail screen.
 final opportunityByIdProvider = StreamProvider.autoDispose
     .family<Opportunity?, String>((ref, opportunityId) {
       return ref
@@ -56,6 +62,7 @@ final opportunityByIdProvider = StreamProvider.autoDispose
           .watchOpportunity(opportunityId);
     });
 
+// Gets every opportunity posted by one startup.
 final opportunitiesByStartupProvider = StreamProvider.autoDispose
     .family<List<Opportunity>, String>((ref, startupId) {
       return ref

@@ -14,6 +14,7 @@ import '../../auth/providers/auth_providers.dart';
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
+  // Draws the person's photo, name, stats, and the list of profile actions (edit, logout, etc).
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appUser = ref.watch(currentAppUserProvider).value;
@@ -68,6 +69,7 @@ class ProfileScreen extends ConsumerWidget {
                 ],
               ),
             ),
+            // Only students get to see how many applications they've sent, so this is hidden for startup owners.
             if (appUser?.role == UserRole.student) ...[
               SizedBox(height: AppSpacing.xl),
               _ApplicationStats(applications: applications),
@@ -103,6 +105,7 @@ class ProfileScreen extends ConsumerWidget {
                     label: 'Help & Support',
                     onTap: () {},
                   ),
+                  // Signs the person out and sends them back to the login screen.
                   _ProfileRow(
                     icon: Icons.logout,
                     label: 'Logout',
@@ -124,6 +127,8 @@ class ProfileScreen extends ConsumerWidget {
   }
 }
 
+// The row of three numbers: how many applications the student sent, how many were
+// shortlisted, and how many were accepted.
 class _ApplicationStats extends StatelessWidget {
   const _ApplicationStats({required this.applications});
 
@@ -149,6 +154,7 @@ class _ApplicationStats extends StatelessWidget {
   }
 }
 
+// One number with a small label underneath it, e.g. "3" over "Accepted".
 class _StatItem extends StatelessWidget {
   const _StatItem({required this.value, required this.label});
 
@@ -167,6 +173,7 @@ class _StatItem extends StatelessWidget {
   }
 }
 
+// One tappable row in the profile menu, like "My Profile" or "Logout".
 class _ProfileRow extends StatelessWidget {
   const _ProfileRow({
     required this.icon,
