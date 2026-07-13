@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/app_user.dart';
 import '../../features/applications/screens/applicant_review_screen.dart';
+import '../../features/applications/screens/my_applicants_screen.dart';
 import '../../features/applications/screens/my_applications_screen.dart';
 import '../../features/auth/providers/auth_providers.dart';
 import '../../features/auth/screens/login_screen.dart';
@@ -42,6 +43,7 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: FeedRoute.page, initial: true),
         AutoRoute(page: PostOpportunityRoute.page),
         AutoRoute(page: MyApplicationsRoute.page),
+        AutoRoute(page: MyApplicantsRoute.page),
         AutoRoute(page: ConversationsRoute.page),
         AutoRoute(page: ProfileRoute.page),
       ],

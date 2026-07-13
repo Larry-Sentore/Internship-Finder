@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/application_status_badge.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/loading_indicator.dart';
 import '../../../models/application.dart';
@@ -162,7 +163,7 @@ class _ApplicationCard extends ConsumerWidget {
                     ],
                   ),
                 ),
-                _StatusBadge(status: application.status),
+                ApplicationStatusBadge(status: application.status),
               ],
             ),
             // Only show the withdraw button if this application can still be cancelled.
@@ -183,62 +184,6 @@ class _ApplicationCard extends ConsumerWidget {
             ],
           ],
         ),
-      ),
-    );
-  }
-}
-
-// Small colored label showing the application's current status (e.g. Pending, Accepted).
-class _StatusBadge extends StatelessWidget {
-  const _StatusBadge({required this.status});
-
-  final ApplicationStatus status;
-
-  @override
-  Widget build(BuildContext context) {
-    // Picks which icon, color, and text to show based on the status.
-    final IconData icon;
-    final Color color;
-    final String label;
-    switch (status) {
-      case ApplicationStatus.pending:
-        icon = Icons.hourglass_top;
-        color = AppColors.warning;
-        label = 'Pending';
-      case ApplicationStatus.underReview:
-        icon = Icons.visibility_outlined;
-        color = AppColors.primary;
-        label = 'Shortlisted';
-      case ApplicationStatus.accepted:
-        icon = Icons.check_circle_outline;
-        color = AppColors.success;
-        label = 'Accepted';
-      case ApplicationStatus.rejected:
-        icon = Icons.cancel_outlined;
-        color = AppColors.error;
-        label = 'Rejected';
-      case ApplicationStatus.withdrawn:
-        icon = Icons.undo;
-        color = AppColors.textMuted;
-        label = 'Withdrawn';
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: AppSpacing.xs,
-      ),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(AppRadius.chip),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: color),
-          SizedBox(width: AppSpacing.xs),
-          Text(label, style: AppTextStyles.labelSmall.copyWith(color: color)),
-        ],
       ),
     );
   }

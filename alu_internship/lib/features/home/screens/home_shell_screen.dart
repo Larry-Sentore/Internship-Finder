@@ -22,6 +22,8 @@ class HomeShellScreen extends ConsumerWidget {
         const FeedRoute(),
         // Startup owners get a tab to post opportunities; students get one to track their applications.
         if (isStartupOwner) const PostOpportunityRoute() else const MyApplicationsRoute(),
+        // Startup owners also get a tab to review everyone who applied to their postings.
+        if (isStartupOwner) const MyApplicantsRoute(),
         const ConversationsRoute(),
         const ProfileRoute(),
       ],
@@ -50,6 +52,13 @@ class HomeShellScreen extends ConsumerWidget {
                   icon: Icon(Icons.assignment_outlined),
                   selectedIcon: Icon(Icons.assignment),
                   label: 'Applications',
+                ),
+              // Lets startup owners review everyone who applied to their postings.
+              if (isStartupOwner)
+                const NavigationDestination(
+                  icon: Icon(Icons.people_outline),
+                  selectedIcon: Icon(Icons.people),
+                  label: 'Applicants',
                 ),
               const NavigationDestination(
                 icon: Icon(Icons.chat_bubble_outline),

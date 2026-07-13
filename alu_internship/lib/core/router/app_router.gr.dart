@@ -204,6 +204,22 @@ class LoginRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [MyApplicantsScreen]
+class MyApplicantsRoute extends PageRouteInfo<void> {
+  const MyApplicantsRoute({List<PageRouteInfo>? children})
+    : super(MyApplicantsRoute.name, initialChildren: children);
+
+  static const String name = 'MyApplicantsRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const MyApplicantsScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [MyApplicationsScreen]
 class MyApplicationsRoute extends PageRouteInfo<void> {
   const MyApplicationsRoute({List<PageRouteInfo>? children})

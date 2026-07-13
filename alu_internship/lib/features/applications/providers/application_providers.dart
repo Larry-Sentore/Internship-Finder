@@ -28,3 +28,12 @@ final applicationsByOpportunityProvider = StreamProvider.autoDispose
           .watch(applicationRepositoryProvider)
           .watchApplicationsByOpportunity(opportunityId);
     });
+
+// Gets every application across every opportunity one startup has posted, so the
+// owner can review all of their applicants from a single screen.
+final applicationsByStartupProvider = StreamProvider.autoDispose
+    .family<List<Application>, String>((ref, startupId) {
+      return ref
+          .watch(applicationRepositoryProvider)
+          .watchApplicationsByStartup(startupId);
+    });
